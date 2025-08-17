@@ -12,8 +12,8 @@ const ADMIN_USERS = [
     uid: "local_admin_uid_12345",       // UID ficticio para el primer administrador
   },
   {
-    email: "admin2@biblioteca.com",     // Email del segundo administrador
-    password: "securepassword2",        // Contraseña del segundo administrador
+    email: "chacho@gmail.com",     // Email del segundo administrador
+    password: "chacho2025",        // Contraseña del segundo administrador
     uid: "local_admin_uid_67890",       // UID ficticio para el segundo administrador
   },
   // Puedes añadir más administradores aquí siguiendo el mismo formato
