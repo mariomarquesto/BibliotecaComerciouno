@@ -510,8 +510,8 @@ function BuscarGutenberg() {
       <h2 className="text-center mb-4">Buscar Libros en la Biblioteca Extendida</h2>
       <Alert className="text-center text-white bg-transparent border-0"> {/* CAMBIO AQUÍ: Eliminado variant="primary", añadido bg-transparent y border-0 */}
         **Nota:** Esta sección busca libros utilizando la API de <a href="https://gutendex.com/" target="_blank" rel="noopener noreferrer" className="text-white-50">Gutendex.com</a> (dominio público), la **Google Books API** (amplia gama, incluyendo académicos) y la **Open Library API** (amplia colección digitalizada, a menudo con enlaces de Internet Archive).
-        <br/>
-        Para búsquedas de temas específicos como **"Historia Argentina"** o asignaturas, prueba a usar tanto el campo "Término de Búsqueda" como la "Categoría" relacionada para obtener mejores resultados. La disponibilidad de archivos PDF/EPUB directos puede variar por fuente.
+        
+       
       </Alert>
 
       <Form onSubmit={handleSearch} className="mb-4">
