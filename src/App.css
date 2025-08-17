@@ -1,11 +1,14 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-  background-color: rgb(228, 215, 227);
+  min-height: 100vh; 
+  width: 100%;
+  padding: 0; 
+  margin: 0; 
+  /* ¡AHORA EL GRADIENTE ESTÁ AQUÍ para que se aplique a TODA la aplicación! */
+  background: linear-gradient(135deg, #FFE600 0%, #6F00FF 100%); /* Gradiente de amarillo brillante a violeta oscuro */
+  text-align: initial; 
 }
 
+/* Otros estilos de tu aplicación que puedes mantener o ajustar */
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -41,3 +44,26 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Puedes añadir más estilos globales aquí para elementos comunes */
+/* Por ejemplo, para los botones de Bootstrap, si quieres que sigan la paleta de colores */
+/*
+.btn-primary {
+  background-color: #6F00FF !important;
+  border-color: #6F00FF !important;
+}
+.btn-primary:hover {
+  background-color: #5500CC !important;
+  border-color: #5500CC !important;
+}
+.btn-success {
+  background-color: #FFE600 !important;
+  border-color: #FFE600 !important;
+  color: #333 !important;
+}
+.btn-success:hover {
+  background-color: #FFD900 !important;
+  border-color: #FFD900 !important;
+  color: #333 !important;
+}
+*/
