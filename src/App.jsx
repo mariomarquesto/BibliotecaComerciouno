@@ -7,9 +7,9 @@ import MiNavbar from './components/MiNavbar.jsx';
 import FormularioLibros from './components/FormularioLibros.jsx';
 import HomePage from './components/HomePage.jsx';
 import Reportes from './components/Reportes.jsx';
-import LoginPage from './components/LoginPage.tsx'; // Asegúrate de que el archivo se llame LoginPage.tsx
+import LoginPage from './components/LoginPage.tsx'; 
 import BuscarGutenberg from './components/BuscarGutenberg.jsx';
-import Biblioteca from './components/Biblioteca.jsx'; // ¡IMPORTA EL NUEVO COMPONENTE BIBLIOTECA!
+import Biblioteca from './components/Biblioteca.jsx'; 
 
 // Importa tus otros componentes adicionales
 import PrestamosLibros from './components/PrestamosLibros.jsx';
@@ -35,8 +35,8 @@ function App() {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser); // <-- Esto sí utiliza setUser
-        setIsAdmin(parsedUser.isAdmin); // <-- Esto sí utiliza setIsAdmin
+        setUser(parsedUser); 
+        setIsAdmin(parsedUser.isAdmin); 
       } catch (e) {
         console.error("Error al parsear usuario de localStorage:", e);
         localStorage.removeItem('currentUser'); // Limpiar datos corruptos
@@ -45,7 +45,7 @@ function App() {
       }
     }
     setLoadingApp(false); 
-  }, []); // Se ejecuta solo una vez al montar
+  }, []); 
 
   if (loadingApp) {
     return (
@@ -64,19 +64,16 @@ function App() {
       <Container className="mt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/biblioteca" element={<Biblioteca />} /> {/* ¡NUEVA RUTA PARA BIBLIOTECA! */}
+          <Route path="/biblioteca" element={<Biblioteca />} /> 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/buscar-gutenberg" element={<BuscarGutenberg />} />
           
-          {/* Rutas protegidas para el admin local (definido por el login exitoso) */}
+          {/* Rutas protegidas para el admin local */}
           <Route 
             path="/ingresar-libro" 
             element={isAdmin ? <FormularioLibros isAdmin={isAdmin} /> : <p className="text-center alert alert-warning">Acceso denegado. Solo administradores.</p>} 
           />
-          {/* AdminPanel.tsx no se usa en este setup hardcodeado de admins, así que su ruta no es necesaria.
-             Si deseas volver a la gestión de admins por Firestore, esta ruta y el componente AdminPanel.tsx serían útiles.
-          */}
           
           {/* Tus otras rutas */}
           <Route path="/prestamos-libros" element={<PrestamosLibros />} />
@@ -86,6 +83,14 @@ function App() {
           <Route path="/inventario" element={<InventarioBiblioteca />} />
         </Routes>
       </Container>
+      
+      {/* CAMBIO AQUÍ: Usamos 'app-footer' para el fondo del Footer */}
+      <footer className="app-footer mt-auto py-3 text-center">
+        <Container>
+          {/* CAMBIO AQUÍ: Añadimos 'text-white' al texto del footer */}
+          <span className="text-white">Desarrollado por Mario Marquestó.</span>
+        </Container>
+      </footer>
     </Router>
   );
 }

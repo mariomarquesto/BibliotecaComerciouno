@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -9,8 +9,7 @@ import Button from 'react-bootstrap/Button';
 import localAuthService from '../auth/localAuthService'; 
 
 // Importa el logo de la escuela
-import logo from '../assets/logo.jpeg'; // Asegúrate de que la ruta sea correcta.
-                                        // Si tu carpeta assets no existe, crea una y mueve logo.jpeg allí.
+import logo from '../assets/logo.jpeg'; 
 
 function MiNavbar({ user, isAdmin }) { 
   const navigate = useNavigate();
@@ -27,13 +26,13 @@ function MiNavbar({ user, isAdmin }) {
   };
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary rounded-3">
+    // CAMBIO AQUÍ: Usamos 'app-navbar' para el fondo del Navbar
+    <Navbar expand="lg" className="app-navbar rounded-3"> 
       <Container fluid>
         <Navbar.Brand as={Link} to="/biblioteca">
-          {/* ¡CAMBIO AQUÍ! Usamos la imagen del logo */}
           <img
             src={logo}
-            height="40" // Ajusta la altura según sea necesario
+            height="40" 
             className="d-inline-block align-top"
             alt="Logo de la Biblioteca"
           />
@@ -45,25 +44,24 @@ function MiNavbar({ user, isAdmin }) {
             style={{ maxHeight: "100px" }}
             navbarScroll
           >
-            <Nav.Link as={Link} to="/">
+            {/* CAMBIO AQUÍ: Añadimos 'text-white' a los Nav.Link */}
+            <Nav.Link as={Link} to="/" className="text-white"> 
               Home
             </Nav.Link>
             
-            {/* Este enlace solo se muestra para administradores */}
             {isAdmin && (
-              <Nav.Link as={Link} to="/ingresar-libro">
+              <Nav.Link as={Link} to="/ingresar-libro" className="text-white">
                 Ingresar y Ver Libros
               </Nav.Link>
             )}
 
-            {/* Este enlace siempre es visible */}
-            <Nav.Link as={Link} to="/buscar-gutenberg">
+            <Nav.Link as={Link} to="/buscar-gutenberg" className="text-white">
               Buscar en Gutenberg
             </Nav.Link>
 
-            {/* Agrupamos los elementos que solo deben ser visibles para administradores */}
             {isAdmin && (
-              <NavDropdown title="Más Opciones" id="navbarScrollingDropdown">
+              // CAMBIO AQUÍ: Añadimos 'text-white' al NavDropdown title
+              <NavDropdown title={<span className="text-white">Más Opciones</span>} id="navbarScrollingDropdown">
                 <NavDropdown.Item as={Link} to="/prestamos-libros">
                   Préstamos
                 </NavDropdown.Item>
@@ -87,10 +85,10 @@ function MiNavbar({ user, isAdmin }) {
             )}
           </Nav>
           <Nav>
-            {/* Lógica para mostrar Iniciar Sesión o Cerrar Sesión */}
             {user ? (
               <>
-                <Navbar.Text className="me-2">
+                {/* CAMBIO AQUÍ: Añadimos 'text-white' a Navbar.Text */}
+                <Navbar.Text className="me-2 text-white"> 
                   Bienvenido, {user.email} {isAdmin && "(Admin)"}
                 </Navbar.Text>
                 <Button variant="outline-danger" onClick={handleLogout}>
