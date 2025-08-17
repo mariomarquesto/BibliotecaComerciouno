@@ -1,3 +1,9 @@
+/* Estilos generales de la aplicación */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8f9fa; /* Un color de fondo suave */
+}
+
 #root {
   min-height: 100vh; 
   width: 100%;
@@ -43,6 +49,16 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Estilos para las tarjetas de libros con animación */
+.book-card-animated {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.book-card-animated:hover {
+  transform: translateY(-5px) scale(1.02); /* Ligeramente hacia arriba y un poco más grande */
+  box-shadow: 0 10px 20px rgba(111, 0, 255, 0.4); /* Sombra más pronunciada con color violeta semitransparente */
 }
 
 /* Puedes añadir más estilos globales aquí para elementos comunes */

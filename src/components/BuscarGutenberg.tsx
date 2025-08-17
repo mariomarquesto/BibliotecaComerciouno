@@ -585,7 +585,7 @@ function BuscarGutenberg() {
               const downloadOption = getDownloadOption(book.formats);
               return (
                 <Col md={4} className="mb-4" key={book.id}>
-                  <Card className="h-100 shadow-sm">
+                  <Card className="h-100 shadow-sm book-card-animated"> {/* AÑADIDA CLASE DE ANIMACIÓN */}
                     {/* Imagen de portada */}
                     <div className="text-center p-3">
                       <Card.Img 
