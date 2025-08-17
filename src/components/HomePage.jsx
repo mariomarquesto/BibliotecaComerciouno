@@ -3,19 +3,20 @@ import { Container } from 'react-bootstrap';
 
 function HomePage() {
   return (
-    // Contenedor principal. El gradiente de fondo ahora viene de App.css (#root)
+    // Contenedor principal. El gradiente de fondo vibrante ahora viene de App.css (#root)
+    // Este div asegura que el contenido esté centrado vertical y horizontalmente.
     <div style={{
-      minHeight: 'calc(100vh - 56px)', // Ocupa el espacio restante de la pantalla menos la barra de navegación
+      minHeight: 'calc(100vh - 56px)', // Ocupa el espacio restante de la pantalla (resta la altura de la Navbar)
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: 'center', // Centra horizontalmente
+      alignItems: 'center',    // Centra verticalmente
       padding: '20px',
-      overflow: 'hidden', // Oculta cualquier desbordamiento de animaciones
+      overflow: 'hidden',      // Oculta cualquier desbordamiento de animaciones o contenido
     }}>
-      {/* Estilos CSS y animaciones integrados en el componente */}
+      {/* Estilos CSS y animaciones integrados directamente en el componente */}
       <style>
         {`
-        /* Animación de entrada con desvanecimiento y pequeña escala */
+        /* Animación de entrada: el contenido aparece con un desvanecimiento y una pequeña escala */
         @keyframes fadeInScale {
           from {
             opacity: 0;
@@ -27,7 +28,7 @@ function HomePage() {
           }
         }
 
-        /* Animación sutil de pulso para la sombra de la tarjeta */
+        /* Animación sutil de pulso: hace que la sombra de la tarjeta "respire" */
         @keyframes pulseShadow {
           0% {
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -40,31 +41,33 @@ function HomePage() {
           }
         }
 
-        /* Estilos y animaciones para la tarjeta principal de la Home Page */
+        /* Estilos base para la tarjeta principal de la Home Page */
         .homepage-card {
-          background: #fff; /* Fondo blanco para la tarjeta, para que resalte */
+          background: #fff; /* Fondo blanco para la tarjeta, para que resalte sobre el gradiente */
           border-radius: 15px;
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-          animation: pulseShadow 2s infinite ease-in-out; /* Efecto de "respiración" sutil */
+          animation: pulseShadow 2s infinite ease-in-out; /* Aplica la animación de pulso */
+          max-width: 900px; /* Limita el ancho de la tarjeta para mejor legibilidad */
+          width: 100%; /* Asegura que la tarjeta ocupe el ancho disponible */
         }
 
-        /* Animación para el texto principal con retrasos */
+        /* Estilos y animaciones para los elementos de texto dentro de la Home Page */
         .homepage-text {
-          animation: fadeInScale 1.2s ease-out forwards;
+          animation: fadeInScale 1.2s ease-out forwards; /* Aplica la animación de entrada */
           opacity: 0; /* Inicia invisible */
           transform: translateY(20px); /* Inicia ligeramente abajo */
-          color: #333; /* Texto oscuro para mayor contraste en fondo blanco de tarjeta */
+          color: #333; /* Color de texto oscuro para mayor contraste en fondo blanco de tarjeta */
         }
 
-        /* Estilo específico para los títulos dentro de la tarjeta */
+        /* Asegura que los títulos y párrafos lead dentro de la tarjeta tengan el color correcto */
         .homepage-card h1, .homepage-card p.lead {
-          color: #333; /* Mantener un color de texto oscuro para los títulos */
+          color: #333; 
         }
 
-        /* Animación de "saludo" para el emoji de bienvenida */
+        /* Animación de "saludo" para el emoji */
         .welcome-icon {
           display: inline-block;
-          animation: wave 2s infinite; /* Animación de onda */
+          animation: wave 2s infinite; /* Aplica la animación de onda */
           transform-origin: 70% 70%; /* Punto de rotación para el efecto de onda */
         }
 
@@ -86,11 +89,17 @@ function HomePage() {
         <h1 className="display-4 mb-3 homepage-text">
           <span className="welcome-icon">👋</span> ¡Bienvenido a la Biblioteca Virtual!
         </h1>
-        <p className="lead homepage-text" style={{ animationDelay: '0.3s' }}>Escuela de Comercio Número 1</p>
-        <p className="lead homepage-text" style={{ animationDelay: '0.6s' }}>General Manuel Belgrano</p>
+        <p className="lead homepage-text" style={{ animationDelay: '0.3s' }}>
+          Escuela de Comercio Número 1
+        </p>
+        <p className="lead homepage-text" style={{ animationDelay: '0.6s' }}>
+          General Manuel Belgrano
+        </p>
         <hr className="my-4 homepage-text" style={{ animationDelay: '0.9s' }} />
-        <p className="homepage-text" style={{ animationDelay: '1.2s' }}>
-          Usa la barra de navegación para **"Ingresar Libro"** (si eres admin) o para **"Buscar en Gutenberg"** y **"Explorar Inventario"**.
+        
+        {/* Mensaje final con enlaces, también animado */}
+        <p className="homepage-text mt-4" style={{ animationDelay: '1.2s' }}>
+          Usa la barra de navegación para navegar por la aplicación.
         </p>
       </Container>
     </div>

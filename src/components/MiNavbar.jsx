@@ -8,6 +8,10 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import localAuthService from '../auth/localAuthService'; 
 
+// Importa el logo de la escuela
+import logo from '../assets/logo.jpeg'; // Asegúrate de que la ruta sea correcta.
+                                        // Si tu carpeta assets no existe, crea una y mueve logo.jpeg allí.
+
 function MiNavbar({ user, isAdmin }) { 
   const navigate = useNavigate();
 
@@ -25,8 +29,14 @@ function MiNavbar({ user, isAdmin }) {
   return (
     <Navbar expand="lg" className="bg-body-tertiary rounded-3">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          BIBLIOTECA
+        <Navbar.Brand as={Link} to="/biblioteca">
+          {/* ¡CAMBIO AQUÍ! Usamos la imagen del logo */}
+          <img
+            src={logo}
+            height="40" // Ajusta la altura según sea necesario
+            className="d-inline-block align-top"
+            alt="Logo de la Biblioteca"
+          />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">

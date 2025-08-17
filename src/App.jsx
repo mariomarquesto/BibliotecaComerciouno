@@ -9,6 +9,7 @@ import HomePage from './components/HomePage.jsx';
 import Reportes from './components/Reportes.jsx';
 import LoginPage from './components/LoginPage.tsx'; // Asegúrate de que el archivo se llame LoginPage.tsx
 import BuscarGutenberg from './components/BuscarGutenberg.jsx';
+import Biblioteca from './components/Biblioteca.jsx'; // ¡IMPORTA EL NUEVO COMPONENTE BIBLIOTECA!
 
 // Importa tus otros componentes adicionales
 import PrestamosLibros from './components/PrestamosLibros.jsx';
@@ -63,6 +64,7 @@ function App() {
       <Container className="mt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/biblioteca" element={<Biblioteca />} /> {/* ¡NUEVA RUTA PARA BIBLIOTECA! */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/buscar-gutenberg" element={<BuscarGutenberg />} />
