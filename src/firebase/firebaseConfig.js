@@ -1,11 +1,13 @@
 // src/firebase/firebaseConfig.js
 import { initializeApp } from 'firebase/app';
-// Asegúrate de que 'onSnapshot' esté aquí en la importación
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from 'firebase/firestore'; // <-- ¡Añadido onSnapshot aquí!
-// Si vas a usar Storage para PDF o imágenes, también estas:
+// Importa las funciones de Firestore necesarias
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+// Importa las funciones de Storage (si las vas a usar)
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+// Importa las funciones de autenticación
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth'; 
 
-// **TU CONFIGURACIÓN DE FIREBASE** - ¡Estos valores deben ser los que obtuviste de la consola!
+// Tu configuración de Firebase - ¡Asegúrate de que estos valores sean los que copiaste de la consola!
 const firebaseConfig = {
   apiKey: "AIzaSyADFqDxMqe_lVR18pZhNwwOUvJr4ksZLDI",
   authDomain: "bibliotecavirtual-12e9f.firebaseapp.com",
@@ -15,14 +17,35 @@ const firebaseConfig = {
   appId: "1:161361143720:web:3f995dc0521178f1789f9d"
 };
 
-// **¡MUY IMPORTANTE! Inicializar la aplicación de Firebase**
+// Inicializa la aplicación de Firebase
 const app = initializeApp(firebaseConfig);
 
-// **¡MUY IMPORTANTE! Inicializar Firestore (la base de datos)**
+// Inicializa Firestore (la base de datos)
 const db = getFirestore(app);
 
-// **Inicializar Cloud Storage (si lo usarás para PDFs)**
-const storage = getStorage(app);
+// Inicializa Cloud Storage
+const storage = getStorage(app);         
 
-// **¡MUY IMPORTANTE! Exportar 'onSnapshot' junto con el resto**
-export { db, storage, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, onSnapshot, ref, uploadBytes, getDownloadURL, deleteObject }; // <-- ¡Añadido onSnapshot aquí!
+// Inicializa Firebase Authentication
+const auth = getAuth(app); 
+
+// Exporta todas las instancias y funciones que necesitas usar en otros componentes
+export { 
+  db, 
+  storage, 
+  auth, // <-- ¡Este 'auth' es crucial!
+  collection, 
+  addDoc, 
+  getDocs, 
+  doc, 
+  deleteDoc, 
+  updateDoc, 
+  onSnapshot,
+  ref, 
+  uploadBytes, 
+  getDownloadURL, 
+  deleteObject,
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged // <-- ¡Este 'onAuthStateChanged' es crucial!
+};
