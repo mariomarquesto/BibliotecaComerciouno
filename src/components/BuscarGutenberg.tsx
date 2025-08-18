@@ -231,8 +231,9 @@ function BuscarGutenberg() {
 
   // Función para buscar en Google Books API
   const fetchFromGoogleBooks = async (searchTerm: string, language: string, category: string): Promise<BookResult[]> => {
-    if (!GOOGLE_BOOKS_API_KEY || GOOGLE_BOOKS_API_KEY === 'AIzaSyCy6G1p4Lpks2yXKbA0GY67fPv9jWH0vmI') {
-      console.warn("ADVERTENCIA CRÍTICA: GOOGLE_BOOKS_API_KEY no configurada o es el placeholder. La búsqueda de Google Books no funcionará. Por favor, reemplaza 'AIzaSyCy6G1p4Lpks2yXKbA0GY67fPv9jWH0vmI' con tu clave real válida.");
+    // CORRECCIÓN: El placeholder string en la advertencia debe coincidir con el asignado a GOOGLE_BOOKS_API_KEY
+    if (!GOOGLE_BOOKS_API_KEY || GOOGLE_BOOKS_API_KEY === 'AIzaSyADFqDxMqe_lVR18pZhNwwOUvJr4ksZLDI') { 
+      console.warn("ADVERTENCIA CRÍTICA: GOOGLE_BOOKS_API_KEY no configurada o es el placeholder. La búsqueda de Google Books no funcionará. Por favor, reemplaza 'AIzaSyADFqDxMqe_lVR18pZhNwwOUvJr4ksZLDI' con tu clave real válida.");
       return [];
     }
 
