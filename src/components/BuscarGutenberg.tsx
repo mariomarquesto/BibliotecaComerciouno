@@ -36,13 +36,13 @@ function BuscarGutenberg() {
   const [language, setLanguage] = useState<string>('es');
   const [category, setCategory] = useState<string>('');
   const [results, setResults] = useState<BookResult[]>([]); 
-  const [loading, setLoading] = useState<boolean>(false);   
+  const [loading, setLoading] = useState<boolean>(false);   
   const [error, setError] = useState<string | null>(null); 
-  const [message, setMessage] = useState<string>('');      
+  const [message, setMessage] = useState<string>('');      
 
   // ¡CLAVE API DE GOOGLE BOOKS INSERTADA AQUÍ!
   // Asegúrate de que esta clave sea válida y esté restringida correctamente en la consola de Google Cloud.
-  const GOOGLE_BOOKS_API_KEY = 'AIzaSyCy6G1p4Lpks2yXKbA0GY67fPv9jWH0vmI'; 
+  const GOOGLE_BOOKS_API_KEY = 'AIzaSyADFqDxMqe_lVR18pZhNwwOUvJr4ksZLDI'; 
 
   // Opciones de categoría mapeadas a 'topic' de Gutendex, usadas en Google Books, y adaptadas para Open Library.
   const categoryOptions: CategoryOption[] = [
@@ -407,11 +407,19 @@ function BuscarGutenberg() {
       setError(null);
       setMessage('');
       try {
+        // Seleccionar una categoría aleatoria para la carga inicial
+        // Excluir la opción "Cualquier Categoría" (value: "")
+        const availableCategories = categoryOptions.filter(opt => opt.value !== "");
+        const randomCategoryOption = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+        const randomCategoryValue = randomCategoryOption ? randomCategoryOption.value : 'Literature'; // Fallback a Literatura
+
+        const currentLanguage = language; // Usar el idioma actualmente seleccionado (español por defecto)
+
         // Realizar búsquedas concurrentes para la carga inicial
         const [gutendexResponse, googleBooksResponse, openLibraryResponse] = await Promise.allSettled([
-          fetchFromGutendex('', 'es', 'Literature'), 
-          fetchFromGoogleBooks('', 'es', 'Literature'),
-          fetchFromOpenLibrary('', 'es', 'Literature')
+          fetchFromGutendex('', currentLanguage, randomCategoryValue), 
+          fetchFromGoogleBooks('', currentLanguage, randomCategoryValue),
+          fetchFromOpenLibrary('', currentLanguage, randomCategoryValue)
         ]);
 
         let combinedBooks: BookResult[] = [];
@@ -428,7 +436,7 @@ function BuscarGutenberg() {
         
         const finalResults = deduplicateBooks(combinedBooks);
         setResults(finalResults.slice(0, 50)); // Mostrar hasta 50 libros iniciales
-        setMessage(`Mostrando ${finalResults.length} libros populares. (Combinado de Gutendex, Google Books y Open Library)`);
+        setMessage(`Mostrando ${finalResults.length} libros populares de "${randomCategoryOption.label}" (combinado de Gutendex, Google Books y Open Library).`);
 
       } catch (err: any) { 
         console.error("Error al cargar libros iniciales:", err);
@@ -438,7 +446,7 @@ function BuscarGutenberg() {
       }
     };
     fetchInitialDefaultBooks();
-  }, []); 
+  }, []); // Se ejecuta solo una vez al montar el componente
 
 
   const handleSearch = async (e: FormEvent) => {
@@ -511,7 +519,7 @@ function BuscarGutenberg() {
       <Alert className="text-center text-white bg-transparent border-0"> {/* CAMBIO AQUÍ: Eliminado variant="primary", añadido bg-transparent y border-0 */}
         **Nota:** Esta sección busca libros utilizando la API de <a href="https://gutendex.com/" target="_blank" rel="noopener noreferrer" className="text-white-50">Gutendex.com</a> (dominio público), la **Google Books API** (amplia gama, incluyendo académicos) y la **Open Library API** (amplia colección digitalizada, a menudo con enlaces de Internet Archive).
         
-       
+        
       </Alert>
 
       <Form onSubmit={handleSearch} className="mb-4">
