@@ -437,6 +437,7 @@ function BuscarGutenberg() {
         
         const finalResults = deduplicateBooks(combinedBooks);
         setResults(finalResults.slice(0, 50)); // Mostrar hasta 50 libros iniciales
+        // Aquí se muestra la cantidad total de libros encontrados inicialmente
         setMessage(`Mostrando ${finalResults.length} libros populares de "${randomCategoryOption.label}" (combinado de Gutendex, Google Books y Open Library).`);
 
       } catch (err: any) { 
@@ -517,10 +518,11 @@ function BuscarGutenberg() {
   return (
     <Container className="my-5">
       <h2 className="text-center mb-4">Buscar Libros en la Biblioteca Extendida</h2>
-      <Alert className="text-center text-white bg-transparent border-0"> {/* CAMBIO AQUÍ: Eliminado variant="primary", añadido bg-transparent y border-0 */}
+      <Alert className="text-center text-white bg-transparent border-0">
         **Nota:** Esta sección busca libros utilizando la API de <a href="https://gutendex.com/" target="_blank" rel="noopener noreferrer" className="text-white-50">Gutendex.com</a> (dominio público), la **Google Books API** (amplia gama, incluyendo académicos) y la **Open Library API** (amplia colección digitalizada, a menudo con enlaces de Internet Archive).
-        
-        
+        <br />
+        <br />
+        Se estima que hay **más de 70,000 libros** en Gutendex, **más de 40 millones** en Google Books, y **más de 3 millones** en Open Library.
       </Alert>
 
       <Form onSubmit={handleSearch} className="mb-4">
@@ -566,7 +568,7 @@ function BuscarGutenberg() {
           </Col>
         </Row>
 
-        <Button variant="success" type="submit" disabled={loading}> {/* CAMBIO AQUÍ: variant="success" */}
+        <Button variant="success" type="submit" disabled={loading}>
           {loading ? (
             <>
               <Spinner
@@ -583,8 +585,8 @@ function BuscarGutenberg() {
         </Button>
       </Form>
 
-      {message && <Alert className="text-center text-white bg-transparent border-0">{message}</Alert>} {/* CORREGIDO AQUÍ */}
-      {error && <Alert variant="danger">{error}</Alert>} {/* Dejamos variant="danger" para errores graves */}
+      {message && <Alert className="text-center text-white bg-transparent border-0">{message}</Alert>}
+      {error && <Alert variant="danger">{error}</Alert>}
 
       {results.length > 0 && (
         <>
@@ -594,7 +596,7 @@ function BuscarGutenberg() {
               const downloadOption = getDownloadOption(book.formats);
               return (
                 <Col md={4} className="mb-4" key={book.id}>
-                  <Card className="h-100 shadow-sm book-card-animated"> {/* AÑADIDA CLASE DE ANIMACIÓN */}
+                  <Card className="h-100 shadow-sm book-card-animated">
                     {/* Imagen de portada */}
                     <div className="text-center p-3">
                       <Card.Img 
