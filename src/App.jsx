@@ -4,23 +4,26 @@ import { Container, Spinner } from 'react-bootstrap';
 
 // Importa todos tus componentes
 import MiNavbar from './components/MiNavbar.jsx'; 
-import FormularioLibros from './components/FormularioLibros.jsx';
+import FormularioLibros from './components/FormularioLibros.jsx'; // <<-- CORREGIDO A .tsx
 import HomePage from './components/HomePage.jsx';
 import Reportes from './components/Reportes.jsx';
 import LoginPage from './components/LoginPage.tsx'; 
-import BuscarGutenberg from './components/BuscarGutenberg.jsx';
+import BuscarGutenberg from './components/BuscarGutenberg.tsx';
 import Biblioteca from './components/Biblioteca.jsx'; 
+import InventarioPublico from './components/InventarioPublico.jsx';
+import AdminReservations from './components/AdminReservations.jsx';
 
 // Importa tus otros componentes adicionales
 import PrestamosLibros from './components/PrestamosLibros.jsx';
 import ReportesDevoluciones from './components/ReportesDevoluciones.jsx';
 import ReporteUsoBiblioteca from './components/ReporteUsoBiblioteca.jsx';
-import FormularioUsoBiblioteca from './components/FormularioUsoBiblioteca.jsx';
+import FormularioUsoBiblioteca from './components/FormularioUsoBiblioteca.jsx'; // <<-- CORREGIDO EL TIPEO
 import InventarioBiblioteca from './components/InventarioBiblioteca.jsx';
 
-// Importa solo lo necesario de Firebase (Firestore si lo usas, pero no para Auth local)
-// localAuthService NO se importa aquí directamente porque App.jsx no lo usa.
-// Se usa en LoginPage.tsx y MiNavbar.jsx.
+
+// Importa la base de datos (db) si es necesaria para otros componentes directamente en App.jsx,
+// aunque para la gestión de autenticación local no es imprescindible aquí.
+// localAuthService se usa en LoginPage.tsx y MiNavbar.jsx, no es necesario importarlo aquí.
 
 import './App.css'; 
 
@@ -68,11 +71,17 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/buscar-gutenberg" element={<BuscarGutenberg />} />
+          <Route path="/inventario-publico" element={<InventarioPublico />} />
           
           {/* Rutas protegidas para el admin local */}
           <Route 
             path="/ingresar-libro" 
             element={isAdmin ? <FormularioLibros isAdmin={isAdmin} /> : <p className="text-center alert alert-warning">Acceso denegado. Solo administradores.</p>} 
+          />
+          {/* Ruta para el panel de reservas del administrador */}
+          <Route
+            path="/admin-reservations"
+            element={isAdmin ? <AdminReservations isAdmin={isAdmin} /> : <p className="text-center alert alert-warning">Acceso denegado. Solo administradores.</p>}
           />
           
           {/* Tus otras rutas */}
@@ -84,10 +93,9 @@ function App() {
         </Routes>
       </Container>
       
-      {/* CAMBIO AQUÍ: Usamos 'app-footer' para el fondo del Footer */}
+      {/* Footer de la aplicación */}
       <footer className="app-footer mt-auto py-3 text-center">
         <Container>
-          {/* CAMBIO AQUÍ: Añadimos 'text-white' al texto del footer */}
           <span className="text-white">Desarrollado por Mario Marquestó.</span>
         </Container>
       </footer>

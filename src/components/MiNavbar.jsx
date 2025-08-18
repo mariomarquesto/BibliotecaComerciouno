@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -58,12 +58,20 @@ function MiNavbar({ user, isAdmin }) {
             <Nav.Link as={Link} to="/buscar-gutenberg" className="text-white">
               Buscar en Gutenberg
             </Nav.Link>
+            {/* Nuevo enlace para el Inventario Público, visible para todos */}
+            <Nav.Link as={Link} to="/inventario-publico" className="text-white">
+              Inventario Público
+            </Nav.Link>
 
             {isAdmin && (
               // CAMBIO AQUÍ: Añadimos 'text-white' al NavDropdown title
               <NavDropdown title={<span className="text-white">Más Opciones</span>} id="navbarScrollingDropdown">
                 <NavDropdown.Item as={Link} to="/prestamos-libros">
                   Préstamos
+                </NavDropdown.Item>
+                {/* NUEVO ENLACE: Gestión de Reservas, solo para administradores */}
+                <NavDropdown.Item as={Link} to="/admin-reservations">
+                  Gestión de Reservas
                 </NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/reportes-devoluciones">
                   Reportes Devoluciones
