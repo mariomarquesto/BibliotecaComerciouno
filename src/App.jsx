@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // useLocation se eliminó de aquí
 import { Container, Spinner } from 'react-bootstrap';
 
 // Importa todos tus componentes
 import MiNavbar from './components/MiNavbar.jsx'; 
-import FormularioLibros from './components/FormularioLibros.jsx'; // <<-- CORREGIDO A .tsx
+import FormularioLibros from './components/FormularioLibros.jsx'; // Importación correcta (.tsx)
 import HomePage from './components/HomePage.jsx';
-import Reportes from './components/Reportes.jsx';
-import LoginPage from './components/LoginPage.tsx'; 
-import BuscarGutenberg from './components/BuscarGutenberg.tsx';
-import Biblioteca from './components/Biblioteca.jsx'; 
+import Reportes from './components/Reportes.jsx'; // Importación correcta (.jsx)
+import LoginPage from './components/LoginPage.jsx'; // Importación correcta (.tsx)
+import BuscarGutenberg from './components/BuscarGutenberg.tsx'; // Importación correcta (.tsx)
 import InventarioPublico from './components/InventarioPublico.jsx';
 import AdminReservations from './components/AdminReservations.jsx';
 
@@ -17,13 +16,14 @@ import AdminReservations from './components/AdminReservations.jsx';
 import PrestamosLibros from './components/PrestamosLibros.jsx';
 import ReportesDevoluciones from './components/ReportesDevoluciones.jsx';
 import ReporteUsoBiblioteca from './components/ReporteUsoBiblioteca.jsx';
-import FormularioUsoBiblioteca from './components/FormularioUsoBiblioteca.jsx'; // <<-- CORREGIDO EL TIPEO
+import FormularioUsoBiblioteca from './components/FormularioUsoBiblioteca.jsx';
 import InventarioBiblioteca from './components/InventarioBiblioteca.jsx';
 
+// Importa el nuevo componente PageViewTracker
+import PageViewTracker from './components/PageViewTracker.jsx'; // Nueva importación
 
-// Importa la base de datos (db) si es necesaria para otros componentes directamente en App.jsx,
-// aunque para la gestión de autenticación local no es imprescindible aquí.
-// localAuthService se usa en LoginPage.tsx y MiNavbar.jsx, no es necesario importarlo aquí.
+// Ya no se necesitan directamente aquí porque PageViewTracker los manejará
+// import { db, collection, addDoc } from './firebase/firebaseConfig'; 
 
 import './App.css'; 
 
@@ -33,7 +33,7 @@ function App() {
   const [loadingApp, setLoadingApp] = useState(true); 
 
   useEffect(() => {
-    // Al cargar la aplicación, intenta recuperar el usuario de localStorage
+    // Lógica de autenticación inicial: intenta recuperar el usuario de localStorage
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -48,7 +48,10 @@ function App() {
       }
     }
     setLoadingApp(false); 
-  }, []); 
+  }, []); // Se ejecuta solo una vez al montar la aplicación
+
+  // El useEffect para el registro de visitas se ha movido a PageViewTracker.jsx
+  // No hay código de seguimiento directo aquí.
 
   if (loadingApp) {
     return (
@@ -62,12 +65,16 @@ function App() {
 
   return (
     <Router>
+      {/* Coloca PageViewTracker aquí, dentro del Router para que useLocation funcione */}
+      <PageViewTracker user={user} isAdmin={isAdmin} /> 
+
+      {/* El componente MiNavbar también debe estar dentro de Router para usar Link */}
       <MiNavbar user={user} isAdmin={isAdmin} /> 
 
       <Container className="mt-4">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/biblioteca" element={<Biblioteca />} /> 
+          <Route path="/biblioteca" element={<InventarioPublico />} /> {/* Puedes usar este o Biblioteca */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/reportes" element={<Reportes />} />
           <Route path="/buscar-gutenberg" element={<BuscarGutenberg />} />
