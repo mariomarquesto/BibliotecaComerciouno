@@ -1,137 +1,240 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Card, Spinner, Alert, ListGroup } from 'react-bootstrap';
-import { db, collection, getDocs } from '../firebase/firebaseConfig';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Card,
+  Spinner,
+  Alert,
+  ListGroup,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { db } from "../firebase/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+
+// Importamos Recharts
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 
 function Reportes() {
-  // Estado para el total de libros
-  const [totalLibros, setTotalLibros] = useState(0);
-  // Estado para el conteo de libros por estante
-  const [librosPorEstante, setLibrosPorEstante] = useState({});
-  // Nuevo estado para el conteo de libros por estante y fila
-  const [librosPorFila, setLibrosPorFila] = useState({});
-  // Estado para indicar si los datos se están cargando
-  const [loading, setLoading] = useState(true);
-  // Estado para manejar errores
-  const [error, setError] = useState(null);
+  const [totalLibros, setTotalLibros] = useState(0);
+  const [librosPorEstante, setLibrosPorEstante] = useState({});
+  const [librosPorFila, setLibrosPorFila] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchReportsData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Obtiene todos los documentos de la colección "libros"
-        const querySnapshot = await getDocs(collection(db, "libros"));
-        let count = 0;
-        const estantesCount = {};
-        const filasCount = {}; // Objeto temporal para contar por fila y estante
+  // Colores para gráficos
+  const COLORS = [
+    "#0088FE",
+    "#00C49F",
+    "#FFBB28",
+    "#FF8042",
+    "#A28BFF",
+    "#FF6699",
+    "#33CCFF",
+    "#66FF66",
+    "#FF9933",
+  ];
 
-        // Itera sobre cada documento (libro)
-        querySnapshot.forEach((doc) => {
-          const libro = doc.data();
-          count += libro.cantidad || 0;
+  useEffect(() => {
+    const fetchReportsData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const querySnapshot = await getDocs(collection(db, "libros"));
+        let count = 0;
+        const estantesCount = {};
+        const filasCount = {};
 
-          const estante = libro.estante;
-          const fila = libro.fila;
+        querySnapshot.forEach((doc) => {
+          const libro = doc.data();
+          const cantidad = libro.cantidad || 0;
+          const estante = parseInt(libro.estante) || null;
+          const fila = parseInt(libro.fila) || null;
 
-          // Cuenta libros por estante
-          if (estante) {
-            estantesCount[estante] = (estantesCount[estante] || 0) + (libro.cantidad || 0);
-          }
+          count += cantidad;
 
-          // Cuenta libros por estante y fila, usando una clave combinada
-          if (estante && fila) {
-            const key = `Estante ${estante}, Fila ${fila}`;
-            filasCount[key] = (filasCount[key] || 0) + (libro.cantidad || 0);
-          }
-        });
+          if (estante !== null) {
+            estantesCount[estante] = (estantesCount[estante] || 0) + cantidad;
+          }
 
-        // Actualiza los estados con los datos calculados
-        setTotalLibros(count);
-        setLibrosPorEstante(estantesCount);
-        setLibrosPorFila(filasCount);
+          if (estante !== null && fila !== null) {
+            const key = `Estante ${estante}, Fila ${fila}`;
+            filasCount[key] = (filasCount[key] || 0) + cantidad;
+          }
+        });
 
-      } catch (err) {
-        console.error("Error al generar reportes:", err);
-        setError("No se pudieron cargar los datos de los reportes. Intenta de nuevo.");
-      } finally {
-        setLoading(false);
-      }
-    };
+        setTotalLibros(count);
+        setLibrosPorEstante(estantesCount);
+        setLibrosPorFila(filasCount);
+      } catch (err) {
+        console.error("Error al generar reportes:", err);
+        setError("No se pudieron cargar los datos de los reportes. Intenta de nuevo.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    fetchReportsData();
-  }, []); // Se ejecuta solo una vez al montar el componente
+    fetchReportsData();
+  }, []);
 
-  return (
-    <Container className="my-5">
-      <h2 className="text-center mb-4">Reportes de la Biblioteca</h2>
+  // Transformar objetos en arrays para Recharts
+  const dataEstantes = Object.keys(librosPorEstante).map((estante) => ({
+    estante: `Estante ${estante}`,
+    cantidad: librosPorEstante[estante],
+  }));
 
-      {loading ? (
-        <div className="text-center">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Cargando reportes...</span>
-          </Spinner>
-          <p className="mt-2">Generando reportes de la base de datos...</p>
-        </div>
-      ) : error ? (
-        <Alert variant="danger">{error}</Alert>
-      ) : (
-        <div className="row">
-          {/* Tarjeta de Total de Libros */}
-          <div className="col-md-6 mb-4">
-            <Card className="text-center shadow-sm">
-              <Card.Header as="h5">Total de Libros en Inventario</Card.Header>
-              <Card.Body>
-                <Card.Title className="display-4 text-primary">{totalLibros}</Card.Title>
-                <Card.Text>Cantidad total de ejemplares disponibles en la biblioteca.</Card.Text>
-              </Card.Body>
-            </Card>
-          </div>
+  const dataFilas = Object.keys(librosPorFila).map((key) => ({
+    name: key,
+    value: librosPorFila[key],
+  }));
 
-          {/* Tarjeta de Libros por Estante */}
-          <div className="col-md-6 mb-4">
-            <Card className="shadow-sm">
-              <Card.Header as="h5">Libros por Estante</Card.Header>
-              <ListGroup variant="flush">
-                {Object.keys(librosPorEstante).sort((a, b) => parseInt(a) - parseInt(b)).map((estante) => (
-                  <ListGroup.Item key={estante} className="d-flex justify-content-between align-items-center">
-                    Estante {estante}
-                    <span className="badge bg-secondary rounded-pill">{librosPorEstante[estante]} libros</span>
-                  </ListGroup.Item>
-                ))}
-                {Object.keys(librosPorEstante).length === 0 && (
-                  <ListGroup.Item className="text-center text-muted">No hay libros registrados en estantes.</ListGroup.Item>
-                )}
-              </ListGroup>
-            </Card>
-          </div>
-          
-          {/* Nueva Tarjeta de Libros por Estante y Fila */}
-          <div className="col-12 mb-4">
-            <Card className="shadow-sm">
-              <Card.Header as="h5">Libros por Estante y Fila</Card.Header>
-              <ListGroup variant="flush">
-                {/* Mapea y muestra los datos de librosPorFila */}
-                {Object.keys(librosPorFila).sort((a, b) => {
-                  const [estanteA, filaA] = a.split(', Fila ').map(part => parseInt(part.replace('Estante ', '')));
-                  const [estanteB, filaB] = b.split(', Fila ').map(part => parseInt(part.replace('Estante ', '')));
-                  if (estanteA !== estanteB) return estanteA - estanteB;
-                  return filaA - filaB;
-                }).map((key) => (
-                  <ListGroup.Item key={key} className="d-flex justify-content-between align-items-center">
-                    {key}
-                    <span className="badge bg-secondary rounded-pill">{librosPorFila[key]} libros</span>
-                  </ListGroup.Item>
-                ))}
-                {Object.keys(librosPorFila).length === 0 && (
-                  <ListGroup.Item className="text-center text-muted">No hay libros registrados con estante y fila.</ListGroup.Item>
-                )}
-              </ListGroup>
-            </Card>
-          </div>
-        </div>
-      )}
-    </Container>
-  );
+  return (
+    <Container className="my-5">
+      <h2 className="text-center mb-4">Reportes de la Biblioteca</h2>
+
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" role="status" />
+          <p className="mt-2">Generando reportes de la base de datos...</p>
+        </div>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : (
+        <Row>
+          {/* Total de Libros */}
+          <Col md={6} className="mb-4">
+            <Card className="text-center shadow-sm">
+              <Card.Header as="h5">Total de Libros en Inventario</Card.Header>
+              <Card.Body>
+                <Card.Title className="display-4 text-primary">
+                  {totalLibros}
+                </Card.Title>
+                <Card.Text>
+                  Cantidad total de ejemplares disponibles en la biblioteca.
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Libros por Estante */}
+          <Col md={6} className="mb-4">
+            <Card className="shadow-sm">
+              <Card.Header as="h5">Libros por Estante</Card.Header>
+              <ListGroup variant="flush">
+                {Object.keys(librosPorEstante)
+                  .sort((a, b) => a - b)
+                  .map((estante) => (
+                    <ListGroup.Item
+                      key={estante}
+                      className="d-flex justify-content-between align-items-center"
+                    >
+                      Estante {estante}
+                      <span className="badge bg-secondary rounded-pill">
+                        {librosPorEstante[estante]} libros
+                      </span>
+                    </ListGroup.Item>
+                  ))}
+                {Object.keys(librosPorEstante).length === 0 && (
+                  <ListGroup.Item className="text-center text-muted">
+                    No hay libros registrados en estantes.
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card>
+          </Col>
+
+          {/* Gráfico de barras */}
+          <Col md={12} className="mb-4">
+            <Card className="shadow-sm p-3">
+              <h5 className="text-center mb-3">Distribución por Estantes</h5>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataEstantes}>
+                  <XAxis dataKey="estante" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="cantidad" fill="#007BFF" />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          </Col>
+
+          {/* Libros por Estante y Fila */}
+          <Col md={12} className="mb-4">
+            <Card className="shadow-sm">
+              <Card.Header as="h5">Libros por Estante y Fila</Card.Header>
+              <ListGroup variant="flush">
+                {Object.keys(librosPorFila)
+                  .sort((a, b) => {
+                    const [estanteA, filaA] = a
+                      .replace("Estante ", "")
+                      .split(", Fila ")
+                      .map(Number);
+                    const [estanteB, filaB] = b
+                      .replace("Estante ", "")
+                      .split(", Fila ")
+                      .map(Number);
+                    return estanteA !== estanteB
+                      ? estanteA - estanteB
+                      : filaA - filaB;
+                  })
+                  .map((key) => (
+                    <ListGroup.Item
+                      key={key}
+                      className="d-flex justify-content-between align-items-center"
+                    >
+                      {key}
+                      <span className="badge bg-secondary rounded-pill">
+                        {librosPorFila[key]} libros
+                      </span>
+                    </ListGroup.Item>
+                  ))}
+                {Object.keys(librosPorFila).length === 0 && (
+                  <ListGroup.Item className="text-center text-muted">
+                    No hay libros registrados con estante y fila.
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card>
+          </Col>
+
+          {/* Gráfico Pie */}
+          <Col md={12} className="mb-4">
+            <Card className="shadow-sm p-3">
+              <h5 className="text-center mb-3">Distribución por Estante y Fila</h5>
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={dataFilas}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={120}
+                    dataKey="value"
+                    label={false}
+                  >
+                    {dataFilas.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend layout="horizontal" align="center" verticalAlign="bottom" />
+                </PieChart>
+              </ResponsiveContainer>
+            </Card>
+          </Col>
+        </Row>
+      )}
+    </Container>
+  );
 }
 
 export default Reportes;

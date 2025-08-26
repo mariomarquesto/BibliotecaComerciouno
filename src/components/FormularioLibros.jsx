@@ -267,6 +267,7 @@ function FormularioLibros() {
                   <td>{libro.cantidad}</td>
                   <td>{libro.fechaRegistro ? new Date(libro.fechaRegistro.seconds * 1000).toLocaleDateString() : 'N/A'}</td>
                   <td>
+                    <div className="d-flex flex-column flex-sm-row gap-2 w-100"> 
                     <Button 
                         variant="warning" 
                         size="sm" 
@@ -282,6 +283,8 @@ function FormularioLibros() {
                     >
                         Eliminar
                     </Button>
+
+                    </div>
                   </td>
                 </tr>
               ))}
