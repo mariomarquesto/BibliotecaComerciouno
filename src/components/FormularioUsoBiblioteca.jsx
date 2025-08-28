@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// Asegúrate de que 'Row' y 'Col' estén en la lista de importaciones
-import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap'; 
+import { Container, Form, Button, Alert, Card, Row, Col } from 'react-bootstrap';
 import { db, collection, addDoc } from '../firebase/firebaseConfig';
 import moment from 'moment';
 
@@ -31,12 +30,22 @@ function FormularioUsoBiblioteca() {
             horaInicio,
             horaFin,
             timestamp: moment().format(),
+            // Agrega los campos de 'materia', 'profesor' y 'turno'
+            // para que los reportes puedan procesar la información.
+            // Si el formulario no los pide, puedes usar valores predeterminados o vacíos.
+            materia: 'Otro', // Valor predeterminado
+            profesor: 'N/A', // Valor predeterminado
+            turno: 'N/A', // Valor predeterminado
+            horaEntrada: moment(`${fecha} ${horaInicio}`).format(), // Combina fecha y hora de inicio
+            horaSalida: moment(`${fecha} ${horaFin}`).format(), // Combina fecha y hora de fin
         };
 
         try {
-            await addDoc(collection(db, "otrosUsos"), nuevoUso);
+            // CAMBIA "otrosUsos" por "usoBiblioteca"
+            await addDoc(collection(db, "usoBiblioteca"), nuevoUso);
             setMensaje('Evento registrado con éxito.');
             setVariante('success');
+            // Restablecer los estados del formulario después del envío exitoso
             setNombreEvento('');
             setDescripcion('');
             setFecha('');
