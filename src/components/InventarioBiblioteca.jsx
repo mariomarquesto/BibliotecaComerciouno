@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Spinner, Alert, Card, ListGroup, Form, Button, Modal, Row, Col } from 'react-bootstrap';
-import { db, collection, onSnapshot, addDoc } from '../firebase/firebaseConfig';
-import { serverTimestamp } from 'firebase/firestore'; // ¡CAMBIO AQUÍ!
-import { FaPlus } from 'react-icons/fa';
+import { Container, Spinner, Alert, Card, ListGroup, Form, Button, Modal, Row, Col, Table } from 'react-bootstrap';
+import { db, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc } from '../firebase/firebaseConfig';
+import { serverTimestamp } from 'firebase/firestore';
+import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 function InventarioBiblioteca() {
     const [inventario, setInventario] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
-
     const [item, setItem] = useState('');
     const [categoria, setCategoria] = useState('');
     const [cantidad, setCantidad] = useState(1);
     const [notas, setNotas] = useState('');
+    const [editingItem, setEditingItem] = useState(null);
 
     const categorias = [
         'Mapas', 
@@ -47,32 +47,81 @@ function InventarioBiblioteca() {
         return () => unsubscribe();
     }, []);
 
-    const handleAddItem = async (e) => {
+    const resetForm = () => {
+        setShowModal(false);
+        setEditingItem(null);
+        setItem('');
+        setCategoria('');
+        setCantidad(1);
+        setNotas('');
+    };
+
+    const handleOpenAddModal = () => {
+        setEditingItem(null);
+        setItem('');
+        setCategoria('');
+        setCantidad(1);
+        setNotas('');
+        setShowModal(true);
+    };
+
+    const handleEditClick = (invItem) => {
+        setEditingItem(invItem);
+        setItem(invItem.item);
+        setCategoria(invItem.categoria);
+        setCantidad(invItem.cantidad);
+        setNotas(invItem.notas);
+        setShowModal(true);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!item || !categoria || !cantidad) {
-            alert('Por favor, completa todos los campos.');
+            alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
 
-        const nuevoItem = {
-            item,
-            categoria,
-            cantidad: Number(cantidad),
-            notas,
-            timestamp: serverTimestamp(),
-        };
+        if (editingItem) {
+            const itemRef = doc(db, "inventarioBiblioteca", editingItem.id);
+            try {
+                await updateDoc(itemRef, {
+                    item,
+                    categoria,
+                    cantidad: Number(cantidad),
+                    notas,
+                });
+                resetForm();
+            } catch (err) {
+                console.error("Error al actualizar el item:", err);
+                alert("Hubo un error al actualizar el item.");
+            }
+        } else {
+            const newItem = {
+                item,
+                categoria,
+                cantidad: Number(cantidad),
+                notas,
+                timestamp: serverTimestamp(),
+            };
+            try {
+                await addDoc(collection(db, "inventarioBiblioteca"), newItem);
+                resetForm();
+            } catch (err) {
+                console.error("Error al añadir el item:", err);
+                alert("Hubo un error al guardar el item.");
+            }
+        }
+    };
 
-        try {
-            await addDoc(collection(db, "inventarioBiblioteca"), nuevoItem);
-            // Limpiar formulario
-            setItem('');
-            setCategoria('');
-            setCantidad(1);
-            setNotas('');
-            setShowModal(false);
-        } catch (err) {
-            console.error("Error al añadir el item:", err);
-            alert("Hubo un error al guardar el item.");
+    const handleDeleteItem = async (id) => {
+        if (window.confirm("¿Estás seguro de que quieres eliminar este artículo? Esta acción no se puede deshacer.")) {
+            try {
+                await deleteDoc(doc(db, "inventarioBiblioteca", id));
+                console.log("Document successfully deleted!");
+            } catch (err) {
+                console.error("Error removing document: ", err);
+                alert("Hubo un error al eliminar el artículo.");
+            }
         }
     };
 
@@ -91,7 +140,7 @@ function InventarioBiblioteca() {
                     <h2 className="mb-0">Inventario de la Biblioteca</h2>
                 </Col>
                 <Col className="text-end">
-                    <Button variant="primary" onClick={() => setShowModal(true)}>
+                    <Button variant="primary" onClick={handleOpenAddModal}>
                         <FaPlus className="me-2" />
                         Añadir Nuevo Artículo
                     </Button>
@@ -100,30 +149,58 @@ function InventarioBiblioteca() {
 
             <Row>
                 {Object.keys(inventario).sort().map(categoria => (
-                    <Col md={6} lg={4} className="mb-4" key={categoria}>
+                    <Col lg={12} className="mb-4" key={categoria}>
                         <Card>
                             <Card.Header as="h5">{categoria}</Card.Header>
                             <Card.Body>
-                                <ListGroup variant="flush">
-                                    {inventario[categoria].map(invItem => (
-                                        <ListGroup.Item key={invItem.id} className="d-flex justify-content-between align-items-center">
-                                            {invItem.item}
-                                            <span className="fw-bold">{invItem.cantidad}</span>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
+                                <Table striped bordered hover responsive>
+                                    <thead>
+                                        <tr>
+                                            <th>Artículo</th>
+                                            <th>Cantidad</th>
+                                            <th>Notas</th>
+                                            <th className="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {inventario[categoria].map(invItem => (
+                                            <tr key={invItem.id}>
+                                                <td>{invItem.item}</td>
+                                                <td>{invItem.cantidad}</td>
+                                                <td>{invItem.notas || '-'}</td>
+                                                <td className="text-center">
+                                                    <Button 
+                                                        variant="outline-secondary" 
+                                                        size="sm" 
+                                                        className="me-2"
+                                                        onClick={() => handleEditClick(invItem)}
+                                                    >
+                                                        <FaEdit />
+                                                    </Button>
+                                                    <Button 
+                                                        variant="outline-danger" 
+                                                        size="sm"
+                                                        onClick={() => handleDeleteItem(invItem.id)}
+                                                    >
+                                                        <FaTrash />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
 
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal show={showModal} onHide={resetForm}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Añadir Nuevo Artículo</Modal.Title>
+                    <Modal.Title>{editingItem ? 'Editar Artículo' : 'Añadir Nuevo Artículo'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleAddItem}>
+                    <Form onSubmit={handleSubmit}>
                         <Form.Group className="mb-3">
                             <Form.Label>Artículo</Form.Label>
                             <Form.Control type="text" value={item} onChange={(e) => setItem(e.target.value)} required />
@@ -144,7 +221,7 @@ function InventarioBiblioteca() {
                             <Form.Control as="textarea" rows={3} value={notas} onChange={(e) => setNotas(e.target.value)} />
                         </Form.Group>
                         <Button variant="primary" type="submit" className="w-100">
-                            Guardar Artículo
+                            {editingItem ? 'Actualizar Artículo' : 'Guardar Artículo'}
                         </Button>
                     </Form>
                 </Modal.Body>
