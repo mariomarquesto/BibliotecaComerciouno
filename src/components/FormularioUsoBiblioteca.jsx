@@ -9,6 +9,9 @@ function FormularioUsoBiblioteca() {
     const [fecha, setFecha] = useState('');
     const [horaInicio, setHoraInicio] = useState('');
     const [horaFin, setHoraFin] = useState('');
+    const [materia, setMateria] = useState('');
+    const [profesor, setProfesor] = useState('');
+    const [turno, setTurno] = useState('');
     const [mensaje, setMensaje] = useState('');
     const [variante, setVariante] = useState('');
 
@@ -29,28 +32,26 @@ function FormularioUsoBiblioteca() {
             fecha,
             horaInicio,
             horaFin,
+            materia,
+            profesor,
+            turno,
             timestamp: moment().format(),
-            // Agrega los campos de 'materia', 'profesor' y 'turno'
-            // para que los reportes puedan procesar la información.
-            // Si el formulario no los pide, puedes usar valores predeterminados o vacíos.
-            materia: 'Otro', // Valor predeterminado
-            profesor: 'N/A', // Valor predeterminado
-            turno: 'N/A', // Valor predeterminado
-            horaEntrada: moment(`${fecha} ${horaInicio}`).format(), // Combina fecha y hora de inicio
-            horaSalida: moment(`${fecha} ${horaFin}`).format(), // Combina fecha y hora de fin
+            horaEntrada: moment(`${fecha} ${horaInicio}`).format(),
+            horaSalida: moment(`${fecha} ${horaFin}`).format(),
         };
 
         try {
-            // CAMBIA "otrosUsos" por "usoBiblioteca"
             await addDoc(collection(db, "usoBiblioteca"), nuevoUso);
             setMensaje('Evento registrado con éxito.');
             setVariante('success');
-            // Restablecer los estados del formulario después del envío exitoso
             setNombreEvento('');
             setDescripcion('');
             setFecha('');
             setHoraInicio('');
             setHoraFin('');
+            setMateria('');
+            setProfesor('');
+            setTurno('');
         } catch (error) {
             console.error("Error al registrar el evento: ", error);
             setMensaje('Error al registrar el evento. Intente de nuevo.');
@@ -60,7 +61,7 @@ function FormularioUsoBiblioteca() {
 
     return (
         <Container className="my-5">
-            <h2 className="text-center mb-4">Registrar Otro Uso de la Biblioteca</h2>
+            <h2 className="text-center mb-4">Registrar Uso de la Biblioteca</h2>
             <Card className="p-4 shadow">
                 {mensaje && <Alert variant={variante}>{mensaje}</Alert>}
                 <Form onSubmit={handleSubmit}>
@@ -84,6 +85,41 @@ function FormularioUsoBiblioteca() {
                             onChange={(e) => setDescripcion(e.target.value)}
                         />
                     </Form.Group>
+                    <Row>
+                        <Col md={4}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Materia</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Ej: Matemáticas, Historia"
+                                    value={materia}
+                                    onChange={(e) => setMateria(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Profesor</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Ej: Juan Pérez"
+                                    value={profesor}
+                                    onChange={(e) => setProfesor(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col md={4}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Turno</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Ej: Matutino, Vespertino"
+                                    value={turno}
+                                    onChange={(e) => setTurno(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
                     <Form.Group className="mb-3">
                         <Form.Label>Fecha</Form.Label>
                         <Form.Control
